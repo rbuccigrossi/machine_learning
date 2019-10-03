@@ -1,2 +1,2 @@
-# machine_learning
-Educational Examples of Machine Learning
+# Machine Learning
+Examples of machine learning using interactive Python notebooks
