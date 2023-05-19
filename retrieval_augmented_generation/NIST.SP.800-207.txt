@@ -1,173 +1,4 @@
-NIST Special Publication 800-207
-
-Zero Trust Architecture
-
-Scott Rose
-Oliver Borchert
-Stu Mitchell
-Sean Connelly
-
-This publication is available free of charge from:
-https://doi.org/10.6028/NIST.SP.800-207
-
-C O M P U T E R
-
-S E C U R I T Y
-
-NIST Special Publication 800-207
-
-Zero Trust Architecture
-Scott Rose
-Oliver Borchert
-Advanced Network Technologies Division
-Information Technology Laboratory
-Stu Mitchell
-Stu2Labs
-Stafford, VA
-Sean Connelly
-Cybersecurity & Infrastructure Security Agency
-Department of Homeland Security
-This publication is available free of charge from:
-https://doi.org/10.6028/NIST.SP.800-207
-August 2020
-
-U.S. Department of Commerce
-
-Wilbur L. Ross, Jr., Secretary
-
-National Institute of Standards and Technology
-Walter Copan, NIST Director and Under Secretary of Commerce for Standards and Technology
-
-Authority
-This publication has been developed by NIST in accordance with its statutory responsibilities under the
-Federal Information Security Modernization Act (FISMA) of 2014, 44 U.S.C. § 3551 et seq., Public Law
-(P.L.) 113-283. NIST is responsible for developing information security standards and guidelines, including
-minimum requirements for federal information systems, but such standards and guidelines shall not apply
-to national security systems without the express approval of appropriate federal officials exercising policy
-authority over such systems. This guideline is consistent with the requirements of the Office of Management
-and Budget (OMB) Circular A-130.
-
-Nothing in this publication should be taken to contradict the standards and guidelines made mandatory and
-binding on federal agencies by the Secretary of Commerce under statutory authority. Nor should these
-guidelines be interpreted as altering or superseding the existing authorities of the Secretary of Commerce,
-Director of the OMB, or any other federal official. This publication may be used by nongovernmental
-organizations on a voluntary basis and is not subject to copyright in the United States. Attribution would,
-however, be appreciated by NIST.
-
-National Institute of Standards and Technology Special Publication 800-207
-Natl. Inst. Stand. Technol. Spec. Publ. 800-207, 59 pages (August 2020)
-CODEN: NSPUE2
-
-This publication is available free of charge from:
-https://doi.org/10.6028/NIST.SP.800-207
-
-Certain commercial entities, equipment, or materials may be identified in this document in order to describe an
-experimental procedure or concept adequately. Such identification is not intended to imply recommendation or
-endorsement by NIST, nor is it intended to imply that the entities, materials, or equipment are necessarily the best
-available for the purpose.
-
-There may be references in this publication to other publications currently under development by NIST in accordance
-with its assigned statutory responsibilities. The information in this publication, including concepts and methodologies,
-may be used by federal agencies even before the completion of such companion publications. Thus, until each
-publication is completed, current requirements, guidelines, and procedures, where they exist, remain operative. For
-planning and transition purposes, federal agencies may wish to closely follow the development of these new
-publications by NIST.
-Organizations are enc
-ouraged to review all draft publications during public comment periods and provide feedback to
-NIST. Many NIST cybersecurity publications, other than the ones noted above, are available at
-https://csrc.nist.gov/publications.
-
-Comments on this publication may be submitted to:
-National Institute of Standards and Technology
-Attn: Advanced Network Technologies Division, Information Technology Laboratory
-100 Bureau Drive (Mail Stop 8920) Gaithersburg, MD 20899-8920
-Email: zerotrust-arch@nist.gov
-
-All comments are subject to release under the Freedom of Information Act (FOIA).
-
-Reports on Computer Systems Technology
-
-The Information Technology Laboratory (ITL) at the National Institute of Standards and
-Technology (NIST) promotes the U.S. economy and public welfare by providing technical
-leadership for the Nation’s measurement and standards infrastructure. ITL develops tests, test
-methods, reference data, proof of concept implementations, and technical analyses to advance the
-development and productive use of information technology. ITL’s responsibilities include the
-development of management, administrative, technical, and physical standards and guidelines for
-the cost-effective security and privacy of other than national security-related information in federal
-information systems. The Special Publication 800-series reports on ITL’s research, guidelines, and
-outreach efforts in information system security, and its collaborative activities with industry,
-government, and academic organizations.
-
-
-Abstract
-
-Zero trust (ZT) is the term for an evolving set of cybersecurity paradigms that move defenses
-from static, network-based perimeters to focus on users, assets, and resources. A zero trust
-architecture (ZTA) uses zero trust principles to plan industrial and enterprise infrastructure and
-workflows. Zero trust assumes there is no implicit trust granted to assets or user accounts based
-solely on their physical or network location (i.e., local area networks versus the internet) or based
-on asset ownership (enterprise or personally owned). Authentication and authorization (both
-subject and device) are discrete functions performed before a session to an enterprise resource is
-established. Zero trust is a response to enterprise network trends that include remote users, bring
-your own device (BYOD), and cloud-based assets that are not located within an enterpriseowned network boundary. Zero trust focuses on protecting resources (assets, services,
-workflows, network accounts, etc.), not network segments, as the network location is no longer
-seen as the prime component to the security posture of the resource. This document contains an
-abstract definition of zero trust architecture (ZTA) and gives general deployment models and use
-cases where zero trust could improve an enterprise’s overall information technology security
-posture.
-
-Keywords
-
-architecture; cybersecurity; enterprise; network security; zero trust.
-
-Acknowledgments
-
-This document is the product of a collaboration between multiple federal agencies and is
-overseen by the Federal CIO Council. The architecture subgroup is responsible for development
-of this document, but there are specific individuals who deserve recognition. These include Greg
-Holden, project manager of the Federal CIO Council ZTA project; Alper Kerman, project
-manager for the NIST/National Cybersecurity Center of Excellence ZTA effort; and Douglas
-Montgomery.
-
-Audience
-
-This document is intended to describe zero trust for enterprise security architects. It is meant to
-aid understanding of zero trust for civilian unclassified systems and provide a road map to
-migrate and deploy zero trust security concepts to an enterprise environment. Agency
-cybersecurity managers, network administrators, and managers may also gain insight into zero
-trust and ZTA from this document. It is not intended to be a single deployment plan for ZTA as
-an enterprise will have unique business use cases and data assets that require safeguards. Starting
-with a solid understanding of the organization’s business and data will result in a strong
-approach to zero trust.
-Trademark Information
-
-All registered trademarks or trademarks belong to their respective organizations.
-
-Patent Disclosure Notice
-
-NOTICE: The Information Technology Laboratory (ITL) has requested that holders of patent claims
-whose use may be required for compliance with the guidance or requirements of this publication
-disclose such patent claims to ITL. However, holders of patents are not obligated to respond to ITL
-calls for patents and ITL has not undertaken a patent search in order to identify which, if any,
-patents may apply to this publication.
-Following the ITL call for the identification of patent claims whose use may be required for
-compliance with the guidance or requirements of this publication, notice of one or more such claims
-has been received.
-
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-207
-
-By publication, no position is taken by ITL with respect to the validity or scope of any patent claim or
-of any rights in connection therewith. The known patent holder(s) has (have), however, provided to
-NIST a letter of assurance stating either (1) a general disclaimer to the effect that it does (they do)
-not hold and does (do) not currently intend holding any essential patent claim(s), or (2) that it (they)
-will negotiate royalty-free or royalty-bearing licenses with other parties on a demonstrably
-nondiscriminatory basis with reasonable terms and conditions.
-Details may be obtained from zerotrust-arch@nist.gov.
-
-No representation is made or implied that this is the only license that may be required to avoid
-patent infringement in the use of this publication.
-
-1 Introduction
+SECTION 1 Introduction
 
 A typical enterprise’s infrastructure has grown increasingly complex. A single enterprise may
 operate several internal networks, remote offices with their own local infrastructure, remote
@@ -215,7 +46,7 @@ identity and access management, continuous monitoring, and best practices, a ZTA
 against common threats and improve an organization’s security posture by using a managed risk
 approach.
 
-1.1 History of Zero Trust Efforts Related to Federal Agencies
+SECTION 1.1 History of Zero Trust Efforts Related to Federal Agencies
 
 The concept of zero trust has been present in cybersecurity since before the term “zero trust” was
 coined. The Defense Information Systems Agency (DISA) and the Department of Defense
@@ -241,7 +72,7 @@ effect for the effort. As technology matures, it is becoming possible to continu
 evaluate access requests in a dynamic and granular fashion to a “need to access” basis to mitigate
 data exposure due to compromised accounts, attackers monitoring a network, and other threats.
 
-1.2 Structure of This Document
+SECTION 1.2 Structure of This Document
 
 The rest of the document is organized as follows:
 
@@ -271,9 +102,7 @@ Section 7 presents the starting point for transitioning an enterprise (such as a
 agency) to a ZTA. This includes a description of the general steps needed to plan and
 deploy applications and enterprise infrastructure that are guided by ZT tenets.
 
-2 ZERO TRUST ARCHITECTURE
-
-Zero Trust Basics
+Section 2 Zero Trust Basics
 
 Zero trust is a cybersecurity paradigm focused on resource protection and the premise that trust
 is never granted implicitly but must be continually evaluated. Zero trust architecture is an end-toend approach to enterprise resource and data security that encompasses identity (person and nonperson entities), credentials, access management, operations, endpoints, hosting environments,
@@ -354,9 +183,7 @@ that make up the enterprise.
 
 3 Part of the concepts defined in OASIS XACML 2.0 https://docs.oasis-open.org/xacml/2.0/access_control-xacml-2.0-core-spec-os.pdf
 
-2.1 ZERO TRUST ARCHITECTURE
-
-Tenets of Zero Trust
+SECTION 2.1 Tenets of Zero Trust
 
 Many definitions and discussions of ZT stress the concept of removing wide-area perimeter
 defenses (e.g., enterprise firewalls) as a factor. However, most of these definitions continue to
@@ -450,9 +277,7 @@ internet users) but may be able to implement some ZT-based policies on nonenterp
 have a special relationship with the organization (e.g. registered customers, employee
 dependents, etc.).
 
-2.2 ZERO TRUST ARCHITECTURE
-
-A Zero Trust View of a Network
+SECTION 2.2 A Zero Trust View of a Network
 
 There are some basic assumptions for network connectivity for any organization that utilizes
 ZTA in network planning and deployment. Some of these assumptions apply to enterprise-owned
@@ -499,9 +324,7 @@ This includes devices that move from enterprise networks to nonenterprise networ
 remote users). This also includes workloads migrating from on-premises data centers to
 nonenterprise cloud instances.
 
-3 ZERO TRUST ARCHITECTURE
-
-Logical Components of Zero Trust Architecture
+SECTION 3 Logical Components of Zero Trust Architecture
 
 There are numerous logical components that make up a ZTA deployment in an enterprise. These
 components may be operated as an on-premises service or through a cloud-based service. The
@@ -599,7 +422,7 @@ collaboration.
  - Security information and event management (SIEM) system: This collects securitycentric information for later analysis. This data is then used to refine policies and warn of
 possible attacks against enterprise assets.
 
-3.1 Variations of Zero Trust Architecture Approaches
+SECTION 3.1 Variations of Zero Trust Architecture Approaches
 
 There are several ways that an enterprise can enact a ZTA for workflows. These approaches vary
 in the components used and in the main source of policy rules for an organization. Each
@@ -685,7 +508,7 @@ secure channel used for communication between the client and resource. There may
 variations of this model, as well for cloud virtual networks, non-IP based networks, etc.
 This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-207
 
-3.2 Deployed Variations of the Abstract Architecture
+SECTION 3.2 Deployed Variations of the Abstract Architecture
 
 All of the above components are logical components. They do not necessarily need to be unique
 systems. A single asset may perform the duties of multiple logical components, and likewise, a
@@ -802,7 +625,7 @@ assets and may not have full visibility into client assets. The enterprise also 
 each sandboxed application is secure, which may require more effort than simply monitoring
 devices.
 
-3.3 Trust Algorithm
+SECTION 3.3 Trust Algorithm
 
 For an enterprise with a ZTA deployment, the policy engine can be thought of as the brain and
 the PE’s trust algorithm as its primary thought process. The trust algorithm (TA) is the process
@@ -937,7 +760,7 @@ processes to function. How long this tuning phase lasts depends on the enterpris
 for progress and tolerance for incorrect access denials/approvals for the resources used in the
 workflow.
 
-3.4 Network/Environment Components
+SECTION 3.4 Network/Environment Components
 
 In a ZT environment, there should be a separation (logical or possibly physical) of the
 communication flows used to control and configure the network and application/service
@@ -1009,7 +832,7 @@ reach certain resources if the requesting asset is located outside of the enterp
 country. These factors could be based on location (geolocation or network location),
 device type, or other criteria.
 
-4 Deployment Scenarios/Use Cases
+SECTION 4 Deployment Scenarios/Use Cases
 
 Any enterprise environment can be designed with zero trust tenets in mind. Most organizations
 already have some elements of zero trust in their enterprise infrastructure or are on their way
@@ -1154,7 +977,7 @@ indicate an automated attack of some kind, and the enterprise could take steps t
 from these identified clients. The enterprise should also be aware of any statutes or regulations
 regarding what information can be collected and recorded about the requesting users and assets.
 
-5 Threats Associated with Zero Trust Architecture
+SECTION 5 Threats Associated with Zero Trust Architecture
 
 No enterprise can eliminate cybersecurity risk. When complemented with existing cybersecurity
 policies and guidance, identity and access management, continuous monitoring, and general
@@ -1308,7 +1131,7 @@ trick the agent into allowing the attacker greater access or into performing som
 the attacker. There is also a risk that an attacker could gain access to a software agent’s
 credentials and impersonate the agent when performing tasks.
 
-6 Zero Trust Architecture and Possible Interactions with Existing Federal Guidance
+SECTION 6 Zero Trust Architecture and Possible Interactions with Existing Federal Guidance
 
 Several existing federal policies and guidance intersect with the planning, deployment, and
 operation of a ZTA. These policies do not prohibit an enterprise from moving to a more zero
@@ -1317,7 +1140,7 @@ When complemented with existing cybersecurity policies and guidance, ICAM, conti
 monitoring, and general cyber hygiene, ZTA may reinforce an organization’s security posture
 and protect against common threats.
 
-6.1 ZTA and NIST Risk Management Framework
+SECTION 6.1 ZTA and NIST Risk Management Framework
 
 A ZTA deployment involves developing access polices around acceptable risk to the designated
 mission or business process (see Section 7.3.3). It is possible to deny all network access to a
@@ -1331,7 +1154,7 @@ enterprise. This is due to the addition of new components (e.g., policy engine, 
 administrator, and PEPs) and a reduction of reliance on network perimeter defenses. The overall
 process described in the RMF will not change in a ZTA.
 
-6.2 Zero Trust and NIST Privacy Framework
+SECTION 6.2 Zero Trust and NIST Privacy Framework
 
 Protecting the privacy of users and private information (e.g., personally identifiable information)
 is a prime concern for organizations. Privacy and data protections are included in compliance
@@ -1353,7 +1176,7 @@ enterprise users. The NIST Privacy Framework [NISTPRIV] could help in developing
 process to identify and mitigate any privacy-related risks to an enterprise developing a zero trust
 architecture.
 
-6.3 ZTA and Federal Identity, Credential, and Access Management Architecture
+SECTION 6.3 ZTA and Federal Identity, Credential, and Access Management Architecture
 
 Subject provisioning is a key component of ZTA. The policy engine cannot determine if
 attempted connections are authorized to connect to a resource if the PE has insufficient
@@ -1371,7 +1194,7 @@ recommendations in NIST SP 800-63-3, Digital Identity Guidelines [SP800-63]. As 
 heavily dependent on precise identity management, any ZTA effort will need to integrate the
 agency’s ICAM policy.
 
-6.4 ZTA and Trusted Internet Connections 3.0
+SECTION 6.4 ZTA and Trusted Internet Connections 3.0
 
 TIC is a federal cybersecurity initiative jointly managed by OMB, DHS, and the General
 Services Administration (GSA), and is intended to establish a network security baseline across
@@ -1401,7 +1224,7 @@ architecture addressing application, user, and data protections. As TIC 3.0 evol
 cases, it is likely that a ZTA TIC use case will be developed to define the network protections to
 be deployed at ZTA enforcement points.
 
-6.5 ZTA and EINSTEIN (NCPS – National Cybersecurity Protection System)
+SECTION 6.5 ZTA and EINSTEIN (NCPS – National Cybersecurity Protection System)
 
 NCPS (operationally known as EINSTEIN) is an integrated system-of-systems that delivers
 intrusion detection, advanced analytics, information sharing, and intrusion prevention
@@ -1427,7 +1250,7 @@ available to federal agencies that have implemented a zero trust architecture. I
 generated in a ZTA may better inform event impact quantification; machine learning tools could
 use ZTA data to improve detection; and additional logs from ZTA may be saved for after-thefact analyses by incident responders.
 
-6.6 ZTA and DHS Continuous Diagnostics and Mitigations (CDM) Program
+SECTION 6.6 ZTA and DHS Continuous Diagnostics and Mitigations (CDM) Program
 
 The DHS CDM program is an effort to improve federal agency information technology (IT).
 Vital to that posture is an agency’s insight into the assets, configuration, and subjects within
@@ -1458,7 +1281,7 @@ first steps in developing a road map to ZTA. Agencies must have visibility into 
 on the network (or those accessing resources remotely) to categorize, configure, and monitor the
 network’s activity.
 
-6.7 ZTA, Cloud Smart, and the Federal Data Strategy
+SECTION 6.7 ZTA, Cloud Smart, and the Federal Data Strategy
 
 The Cloud Smart 8 strategy, updated Data Center Optimization Initiative [M-19-19] policy, and
 Federal Data Strategy 9 all influence some requirements for agencies planning a ZTA. These
@@ -1478,7 +1301,7 @@ take collaboration or publication requirements into account when developing the 
 8 Federal Cloud Computing Strategy: https://cloud.cio.gov/strategy/
 9 Federal Data Strategy: https://strategy.data.gov/
 
-7 Migrating to a Zero Trust Architecture
+SECTION 7 Migrating to a Zero Trust Architecture
 
 Implementing a ZTA is a journey rather than a wholesale replacement of infrastructure or
 processes. An organization should seek to incrementally implement zero trust principles, process
@@ -1497,7 +1320,7 @@ subjects, business processes, traffic flows and dependency mappings identified a
 the enterprise. The enterprise needs this information before it can develop a list of candidate
 business processes and the subjects/assets involved in this process.
 
-7.1 Pure Zero Trust Architecture
+SECTION 7.1 Pure Zero Trust Architecture
 
 In a greenfield approach, it would be possible to build a zero trust architecture from the ground
 up. Assuming the enterprise knows the applications/services and workflows that it wants to use
@@ -1518,7 +1341,7 @@ design the newly needed infrastructure around ZT principles and secure system en
 micro-perimeters around new resources. The degree of success depends on how dependent this
 new infrastructure is on existing resources (e.g., ID management systems).
 
-7.2 Hybrid ZTA and Perimeter-Based Architecture
+SECTION 7.2 Hybrid ZTA and Perimeter-Based Architecture
 
 It is unlikely that any significant enterprise can migrate to zero trust in a single technology
 refresh cycle. There may be an indefinite period when ZTA workflows coexist with non-ZTA
@@ -1532,7 +1355,7 @@ Migrating an existing workflow to a ZTA will likely require (at least) a partial
 Enterprises may take this opportunity to adopt secure system engineering [SP800-160v1]
 practices if they have not already done so for workflows.
 
-7.3 Steps to Introducing ZTA to a Perimeter-Based Architected Network
+SECTION 7.3 Steps to Introducing ZTA to a Perimeter-Based Architected Network
 
 Migrating to ZTA requires an organization to have detailed knowledge of its assets (physical and
 virtual), subjects (including user privileges), and business processes. This knowledge is accessed
@@ -1722,477 +1545,3 @@ to the workflow or policies. In effect, the entire process should be reconsidere
 assumption that some of the work has already been done. For example, new devices have been
 purchased, but no new user accounts have been created, so only the device inventory needs to be
 updated.
-
-References
-
-[ACT-IAC]
-
-American Council for Technology and Industry Advisory Council (2019)
-Zero Trust Cybersecurity Current Trends. Available at
-https://www.actiac.org/zero-trust-cybersecurity-current-trends
-
-[Anderson]
-
-Anderson B, McGrew D (2017) Machine Learning for Encrypted
-Malware Traffic Classification: Accounting for Noisy Labels and NonStationarity. Proceedings of the 23rd ACM SIGKDD International
-Conference on Knowledge Discovery and Data Mining (ACM, Halifax,
-Nova Scotia, Canada), pp 1723-1732.
-https://doi.org/10.1145/3097983.3098163
-
-[BCORE]
-
-Department of Defense CIO (2007). Department of Defense Global
-Information Grid Architecture Vision Version 1.0 June 2007. Available at
-http://www.acqnotes.com/Attachments/DoD%20GIG%20Architectural%
-20Vision,%20June%2007.pdf
-
-[CSA-SDP]
-
-Cloud Security Alliance (2015) SDP Specification 1.0. Available at
-https://cloudsecurityalliance.org/artifacts/sdp-specification-v1-0/
-
-[FIPS199]
-
-National Institute of Standards and Technology (2004) Standards for
-Security Categorization of Federal Information and Information Systems.
-(U.S. Department of Commerce, Washington, DC), Federal Information
-Processing Standards Publication (FIPS) 199.
-https://doi.org/10.6028/NIST.FIPS.199
-
-[Gilman]
-
-Gilman E, Barth D (2017) Zero Trust Networks: Building Secure Systems
-in Untrusted Networks (O’Reilly Media, Inc., Sebastopol, CA), 1st Ed.
-
-[HWAM]
-
-Department of Homeland Security (2015) Hardware Asset Management
-(HWAM) Capability Description. Available at https://www.uscert.gov/sites/default/files/cdm_files/HWAM_CapabilityDescription.pdf
-
-[IBNVN]
-
-Cohen R, Barabash K, Rochwerger B, Schour L, Crisan D, Birke R,
-Minkenberg C, Gusat M, Recio R, Jain V (2013) An Intent-based
-Approach for Network Virtualization. 2013 IFIP/IEEE International
-Symposium on Integrated Network Management (IM 2013). (IEEE,
-Ghent, Belgium), pp 42-50. Available at
-https://ieeexplore.ieee.org/document/6572968
-
-[JERICHO]
-
-The Jericho Forum (2007) Jericho Forum Commandments, version 1.2.
-Available at
-https://collaboration.opengroup.org/jericho/commandments_v1.2.pdf
-
-[M-19-03]
-
-Office of Management and Budget (2018) Strengthening the
-Cybersecurity of Federal Agencies by Enhancing the High Value Asset
-Program. (The White House, Washington, DC), OMB Memorandum M19-03, December 10, 2018. Available at https://www.whitehouse.gov/wpcontent/uploads/2018/12/M-19-03.pdf
-
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-207
-
-[M-19-17]
-
-Office of Management and Budget (2019) Enabling Mission Delivery
-through Improved Identity, Credential, and Access Management. (The
-White House, Washington, DC), OMB Memorandum M-19-17, May 21,
-2019. Available at https://www.whitehouse.gov/wpcontent/uploads/2019/05/M-19-17.pdf
-
-[M-19-19]
-
-Office of Management and Budget (2019) Update on Data Center
-Optimization Initiative (DCOI). (The White House, Washington, DC),
-OMB Memorandum M-19-19, June 25, 2019. Available at
-https://datacenters.cio.gov/assets/files/m_19_19.pdf
-
-[M-19-26]
-
-Office of Management and Budget (2019) Update to the Trusted Internet
-Connections (TIC) Initiative. (The White House, Washington, DC), OMB
-Memorandum M-19-26, September 12, 2019. Available at
-https://www.whitehouse.gov/wp-content/uploads/2019/09/M-19-26.pdf
-
-[NISTIR 7987]
-
-Ferraiolo DF, Gavrila S, Jansen W (2015) Policy Machine: Features,
-Architecture, and Specification. (National Institute of Standards and
-Technology, Gaithersburg, MD), NIST Interagency or Internal Report
-(IR) 7987, Rev. 1. https://doi.org/10.6028/NIST.IR.7987r1
-
-[NISTIR 8062]
-
-Brooks SW, Garcia ME, Lefkovitz NB, Lightman S, Nadeau EM (2017)
-An Introduction to Privacy Engineering and Risk Management in Federal
-Systems. (National Institute of Standards and Technology, Gaithersburg,
-MD), NIST Interagency or Internal Report (IR) 8062.
-https://doi.org/10.6028/NIST.IR.8062
-
-[NISTPRIV]
-
-National Institute of Standards and Technology (2020) Privacy
-Framework: A Tool for Improving Privacy Through Enterprise Risk
-Management, Version 1.0. (National Institute of Standards and
-Technology, Gaithersburg, MD).
-https://doi.org/10.6028/NIST.CSWP.01162020
-
-[SDNBOOK]
-
-Nadeau T, Gray K (2013) SDN: Software Defined Networks: An
-Authoritative Review of Network Programmability Technologies.
-(O’Reilly) 1st Ed.
-
-[SP800-37]
-
-Joint Task Force (2018) Risk Management Framework for Information
-Systems and Organizations: A System Life Cycle Approach for Security
-and Privacy. (National Institute of Standards and Technology,
-Gaithersburg, MD), NIST Special Publication (SP) 800-37, Rev. 2.
-https://doi.org/10.6028/NIST.SP.800-37r2
-
-[SP800-63]
-
-Grassi PA, Garcia ME, Fenton JL (2017) Digital Identity Guidelines.
-(National Institute of Standards and Technology, Gaithersburg, MD),
-NIST Special Publication (SP) 800-63-3, Includes updates as of March 2,
-2020. https://doi.org/10.6028/NIST.SP.800-63-3
-
-[SP800-63A]
-
-Grassi PA, Fenton JL, Lefkovitz NB, Danker JM, Choong Y-Y, Greene
-KK, Theofanos MF (2017) Digital Identity Guidelines: Enrollment and
-Identity Proofing. (National Institute of Standards and Technology,
-Gaithersburg, MD), NIST Special Publication (SP) 800-63A, Includes
-updates as of March 2, 2020. https://doi.org/10.6028/NIST.SP.800-63A
-
-[SP800-160v1]
-
-Ross R, McEvilley M, Oren JC (2016) Systems Security Engineering:
-Considerations for a Multidisciplinary Approach in the Engineering of
-Trustworthy Secure Systems. (National Institute of Standards and
-Technology, Gaithersburg, MD), NIST Special Publication (SP) 800-160,
-Vol. 1, Includes updates as of March 21, 2018.
-https://doi.org/10.6028/NIST.SP.800-160v1
-
-[SP800-160v2]
-
-Ross R, Pillitteri V, Graubart R, Bodeau D, McQuaid R (2019)
-Developing Cyber Resilient Systems: A Systems Security Engineering
-Approach. (National Institute of Standards and Technology, Gaithersburg,
-MD), NIST Special Publication (SP) 800-160, Vol. 2.
-https://doi.org/10.6028/NIST.SP.800-160v2
-
-[SP800-162]
-
-Hu VC, Ferraiolo DF, Kuhn R, Schnitzer A, Sandlin K, Miller R,
-Scarfone KA (2014) Guide to Attribute Based Access Control (ABAC)
-Definition and Considerations. (National Institute of Standards and
-Technology, Gaithersburg, MD), NIST Special Publication (SP) 800-162,
-Includes updates as of August 2, 2019.
-https://doi.org/10.6028/NIST.SP.800-162
-
-[SWAM]
-
-Department of Homeland Security (2015) Software Asset Management
-(SWAM) Capability Description. Available at https://www.uscert.gov/sites/default/files/cdm_files/SWAM_CapabilityDescription.pdf
-
-Appendix A—Acronyms
-
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-207
-
-API
-
-Application Programming Interface
-
-BYOD
-
-Bring Your Own Device
-
-CDM
-
-Continuous Diagnostics and Mitigation
-
-DHS
-
-Department of Homeland Security
-
-DoS
-
-Denial of Service
-
-G2B
-
-Government to Business (private industry)
-
-G2G
-
-Government to Government
-
-NIST
-
-National Institute of Standards and Technology
-
-NPE
-
-Non-Person Entity
-
-PA
-
-Policy Administrator
-
-PDP
-
-Policy Decision Point
-
-PE
-
-Policy Engine
-
-PEP
-
-Policy Enforcement Point
-
-PKI
-
-Public Key Infrastructure
-
-RMF
-
-NIST Risk Management Framework
-
-SDN
-
-Software Defined Network
-
-SDP
-
-Software Defined Perimeter
-
-SIEM
-
-Security Information and Event Monitoring
-
-TIC
-
-Trusted Internet Connections
-
-VPN
-
-Virtual Private Network
-
-ZT
-
-Zero Trust
-
-ZTA
-
-Zero Trust Architecture
-Appendix B—Identified Gaps in the Current State-of-the-Art in ZTA
-
-The current maturity of zero trust components and solutions was surveyed during the research
-conducted in the development of this document. This survey concluded that the current state of
-the ZTA ecosystem is not mature enough for widespread adoption. While it is possible to use
-ZTA strategies to plan and deploy an enterprise environment, there is no single solution that
-provides all the necessary components. Also, few ZTA components available today can be used
-for all of the various workflows present in an enterprise.
-
-The following is a summary of identified gaps in the ZTA ecosystem and areas that need further
-investigation. Some of these areas have some foundation of work, but how ZTA tenets change
-these areas is not well-known as there is not enough experience with diverse ZTA-focused
-enterprise environments.
-
-B.1 Technology Survey
-
-Multiple vendors were invited to present their products and views on zero trust. The goal of this
-survey was to identify missing pieces that prevent agencies from moving to a zero trust based
-enterprise infrastructure now or maintaining an existing ZTA implementation. These gaps can be
-categorized into immediate deployment (immediate or short term), systemic gaps that affect
-maintenance or operations (short or midterm), and missing knowledge (areas for future research).
-They are summarized in Table B-1.
-
-B.2 ZERO TRUST ARCHITECTURE
-
-Gaps that Prevent an Immediate Move to ZTA
-
-These are the issues that are slowing adoption of a ZTA at present. These were classified as
-immediate issues, and no thought of future maintenance or migration was considered for this
-category. A forward-thinking enterprise may also consider the maintenance category to be of
-immediate concern in preventing the initial deployment of ZTA components, but these issues are
-considered a separate category for this analysis.
-
-B.2.1 Lack of Common Terms for ZTA Design, Planning, and Procurement
-
-This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-207
-
-Zero trust as a strategy for the design and deployment of enterprise infrastructure is still a
-forming concept. Industry has not yet coalesced around a single set of terms or concepts to
-describe ZTA components and operations. This makes it difficult for organizations (e.g., federal
-agencies) to develop coherent requirements and policies for designing zero trust enterprise
-infrastructure and procuring components.
-The driver for Sections 2.1 and 3.1 is an initial attempt to form a neutral base of terms and
-concepts to describe ZTA. The abstract ZTA components and deployment models were
-developed to serve as basic terms and ways to think about ZTA. The goal is to provide a
-common way to view, model, and discuss ZTA solutions when developing enterprise
-requirements and performing market surveys. The above sections may prove to be incomplete as
-more experience is gained with ZTA in federal agencies, but they currently serve as a base for a
-common conceptual framework.
-
-B.2.2 Perception that ZTA Conflicts with Existing Federal Cybersecurity Policies
-
-There is a misconception that ZTA is a single framework with a set of solutions that are
-incompatible with the existing view of cybersecurity. Zero trust should instead be viewed as an
-evolution of current cybersecurity strategies as many of the concepts and ideas have been
-circulating for a long time. Federal agencies have been encouraged to take a more zero trust
-approach to cybersecurity through existing guidance (see Section 6). If an agency has a mature
-ID management system and robust CDM capabilities in place, it is on the road to a ZTA (see
-Section 7.3). This gap is based on a misconception of ZTA and how it has evolved from previous
-cybersecurity paradigms.
-
-B.3 Systemic Gaps that Impact ZTA
-
-These are the gaps that affect initial implementation and deployment of ZTA and continued
-operation/maturity. These gaps could slow the adoption of ZTA in agencies or result in
-fragmentation of the ZTA component industry. Systemic gaps are areas where open standards
-(produced either by a standards development organization [SDO] or industry consortium) can
-help.
-
-B.3.3 Standardization of Interfaces Between Components
-
-During the technology survey, it became apparent that no one vendor offers a single solution that
-will provide zero trust. Furthermore, it might not be desirable to use a single-vendor solution to
-achieve zero trust and thereby risk vendor lock-in. This leads to interoperability within
-components not only at the time of purchase but also over time.
-
-The spectrum of components within the wider enterprise is vast, with many products focusing on
-a single niche within zero trust and relying on other products to provide either data or some
-service to another component (e.g., integration of MFA for resource access). Vendors too often
-rely on proprietary APIs provided by partner companies rather than standardized, vendorindependent APIs to achieve this integration. The problem with this approach is that these APIs
-are proprietary and single-vendor controlled. The controlling vendor can change the API
-behavior, and integrators are required to update their products in response. This requires close
-partnerships between communities of vendors to ensure early notification of modifications
-within APIs, which may affect compatibility between products. This adds an additional burden
-on vendors and consumers: vendors need to expend resources to change their products, and
-consumers need to apply updates to multiple products when one vendor makes a change to its
-proprietary API. Additionally, vendors are required to implement and maintain wrappers for each
-partner component to allow maximum compatibility and interoperability. For example, many
-MFA product vendors are required to create a different wrapper for each cloud provider or
-identity management system to be usable in different kinds of client combinations.
-On the customer side, this generates additional problems when developing requirements for
-purchasing products. There are no standards that purchasers can rely on to identify compatibility
-between products. Hence, it is very difficult to create a multiyear road map for moving into ZTA
-because it is impossible to identify a minimum set of compatibility requirements for components.
-
-B.3.4 Emerging Standards that Address Overreliance on Proprietary APIs
-
-As there is no single solution to developing a ZTA, there is no single set of tools or services for a
-zero trust enterprise. Thus, it is impossible to have a single protocol or framework that enables an
-enterprise to move to a ZTA. Currently, there is a wide variety of models and solutions seeking
-to become the leading authority of ZTA.
-
-This indicates that there is an opportunity for a set of open, standardized protocols or frameworks
-to be developed to aid organizations in migrating to a ZTA. SDOs like the Internet Engineering
-Task Force (IETF) have specified protocols that may be useful in exchanging threat information
-(called XMPP-Grid [1]). The Cloud Security Alliance (CSA) has produced a framework for
-Software Defined Perimeter (SDP) [2] that may also be useful in ZTA. Efforts should be directed
-toward surveying the current state of ZTA-related frameworks or the protocols necessary for a
-useful ZTA and toward identifying places where work is needed to produce or improve these
-specifications.
-
-B.4 Knowledge Gaps in ZTA and Future Areas of Research
-
-The gaps listed here do not hinder an organization from adopting a ZTA for its enterprise. These
-are gray areas in knowledge about operational ZTA environments, and most arise from a lack of
-time and experience with mature zero trust deployments. These are areas of future work for
-researchers.
-
-B.4.5 Attacker Response to ZTA
-
-A properly implemented ZTA for an enterprise will improve the enterprise’s cybersecurity
-posture over traditional network perimeter-based security. The tenets of ZTA aim to reduce the
-exposure of resources to attackers and minimize or prevent lateral movement within an
-enterprise should a host asset be compromised.
-
-However, determined attackers will not sit idle but will instead change behavior in the face of
-ZTA. The open issue is how the attacks will change. One possibility is that attacks aimed at
-stealing credentials will be expanded to target MFA (e.g., phishing, social engineering). Another
-possibility is that in a hybrid ZTA/perimeter-based enterprise, attackers will focus on the
-business processes that have not had ZTA tenets applied (i.e., follow traditional network
-perimeter-based security)—in effect, targeting the low-hanging fruit in an attempt to gain some
-foothold in the ZTA business process.
-
-As ZTA matures, more deployments are seen, and experience is gained, the effectiveness of ZTA
-in shrinking the attack surface of resources may become apparent. The metrics of success of
-ZTA over older cybersecurity strategies will also need to be developed.
-
-B.4.6 User Experience in a ZTA Environment
-
-There has not been a rigorous examination of how end users act in an enterprise that is using a
-ZTA. This is mainly due to the lack of large ZTA use cases available for analysis. There have,
-however, been studies on how users react to MFA and other security operations that are part of a
-ZTA enterprise, and this work could form the basis of predicting end user experience and
-behavior when using ZTA workflows in an enterprise.
-One set of studies that can predict how ZTA affects end user experience is the work done on the
-use of MFA in enterprises and security fatigue. Security fatigue [3] is the phenomenon wherein
-end users are confronted with so many security policies and challenges that it begins to impact
-their productivity in a negative way. Other studies show that MFA may alter user behavior, but
-the overall change is mixed [4] [5]. Some users readily accept MFA if the process is streamlined
-and involves devices they are used to using or having with them (e.g., applications on a
-smartphone). However, some users resent having to use personally-owned devices for business
-processes or feel that they are being constantly monitored for possible violations of IT policies.
-
-B.4.7 Resilience of ZTA to Enterprise and Network Disruption
-
-The survey of the ZTA vendor ecosystem displayed the wide range of infrastructure that an
-enterprise deploying a ZTA would need to consider. As previously noted, there is no single
-provider of a full zero trust solution at this time. As a result, enterprises will purchase several
-different services and products, which can lead to a web of dependencies for components. If one
-vital component is disrupted or unreachable, there could be a cascade of failures that impact one
-or multiple business processes.
-Most products and services surveyed relied on a cloud presence to provide robustness, but even
-cloud services have been known to become unreachable through either an attack or simple error.
-When this happens, key components used to make access decisions may be unreachable or may
-not be able to communicate with other components. For example, PE and PA components
-located in a cloud may be reachable during a distributed denial-of-service (DDoS) attack but may
-not be able to reach all PEPs located with resources. Research is needed on discovering the
-possible choke points of ZTA deployment models and the impact on network operations when a
-ZTA component is unreachable or has limited reachability.
-
-The continuity of operations (COOP) plans for an enterprise will likely need revision when
-adopting a ZTA. A ZTA makes many COOP factors easier as remote workers may have the
-same access to resources that they had on-premises. However, policies like MFA may also have
-a negative impact if users are not properly trained or lack experience. Users may forget or not
-have access to tokens and enterprise devices during an emergency, and that will impact the speed
-and effectiveness of enterprise business processes.
-
-B.5 References
-
-[1]
-
-Cam-Winget N (ed.), Appala S, Pope S, Saint-Andre P (2019) Using
-Extensible Messaging and Presence Protocol (XMPP) for Security Information
-Exchange. (Internet Engineering Task Force (IETF)), IETF Request for
-Comments (RFC) 8600. https://doi.org/10.17487/RFC8600
-
-[2]
-
-Software Defined Perimeter Working Group “SDP Specification 1.0” Cloud
-Security Alliance. April 2014.
-
-[3]
-
-Stanton B, Theofanos MF, Spickard Prettyman S, Furman S (2016) Security
-Fatigue. IT Professional 18(5):26-32. https://doi.org/10.1109/MITP.2016.84
-
-[4]
-
-Strouble D, Shechtman GM, Alsop AS (2009) Productivity and Usability
-Effects of Using a Two-Factor Security System. SAIS 2009 Proceedings (AIS,
-Charleston, SC), p 37. Available at http://aisel.aisnet.org/sais2009/37
-
-[5]
-
-Weidman J, Grossklags J (2017) I Like It but I Hate It: Employee Perceptions
-Towards an Institutional Transition to BYOD Second-Factor Authentication.
-Proceedings of the 33rd Annual Computer Security Applications Conference
-(ACSAC 2017) (ACM, Orlando, FL), pp 212-224.
-https://doi.org/10.1145/3134600.3134629
