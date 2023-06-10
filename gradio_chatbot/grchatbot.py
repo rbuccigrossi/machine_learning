@@ -1,11 +1,20 @@
 import gradio as gr
 import openai
+import pinecone
 import os 
 import json
 
+# Connect to OpenAI
 # Get the OPEN_API_KEY from the environment
 openai.api_key = os.getenv("OPENAI_API_KEY") or "OPENAI_API_KEY"
-# print(openai.Engine.list())
+
+# Connect to Pinecone
+api_key = os.getenv("PINECONE_API_KEY") or "PINECONE_API_KEY"
+# find your environment next to the api key in pinecone console
+env = os.getenv("PINECONE_ENVIRONMENT") or "PINECONE_ENVIRONMENT"
+pinecone.init(api_key=api_key, enviroment=env)
+print(pinecone.whoami())
+
 
 # Global variable to hold the messages so far
 messages = []
