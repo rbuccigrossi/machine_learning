@@ -1,3 +1,6 @@
-# Config files #
-################
+# Config file
 grchatbot.conf
+
+# Python compiled files
+__pycache__/
+*.py[cod]

@@ -4,9 +4,10 @@ import pinecone
 import os 
 import json
 
-# Connect to OpenAI
-# Get the OPEN_API_KEY from the environment
-openai.api_key = os.getenv("OPENAI_API_KEY") or "OPENAI_API_KEY"
+from tools.chatgpt import ChatGPT
+
+# Connect to OpenAI ChatGPT (use OPENAI_API_KEY from environment)
+chatgpt = ChatGPT()
 
 # Connect to Pinecone
 api_key = os.getenv("PINECONE_API_KEY") or "PINECONE_API_KEY"
@@ -15,44 +16,29 @@ env = os.getenv("PINECONE_ENVIRONMENT") or "PINECONE_ENVIRONMENT"
 pinecone.init(api_key=api_key, enviroment=env)
 print(pinecone.whoami())
 
-
-# Global variable to hold the messages so far
-messages = []
-
-def add_text(history, text):
-    global messages  #message[list] is defined globally
-    history = history + [(text,'')]
-    messages = messages + [{"role":'user', 'content': text}]
+def accept_user_input(history, text):
+    # Output the user side of the dialog
+    history = history + [[text,None]]
+    # Return thse history to display and clear the message box
     return history, ""
 
 def generate_response(history, model):
-    global messages
-
+    # Grab the user input from the history
+    text = history[-1][0];
     try:
-        response = openai.ChatCompletion.create(
-            model = model,
-            messages=messages,
-            temperature=0.2,
-        )
-        
-        response_msg = response.choices[0].message.content
-        messages = messages + [{"role":'assistant', 'content': response_msg}]
-        
-        history[-1][1] += response_msg
-        yield history
+        # Now call the chatbot to get the response
+        response = chatgpt.chat(text, model)
+        # Update the chatbot's response
+        history[-1][1] = response
+        return history
     except Exception as e:
-        history[-1][1] += "We received an error: " + str(e);
-        yield history
-    
-#    for char in response_msg:
-#        history[-1][1] += char
-#        yield history
-
+        # Upon error, output the error as the response
+        history[-1][1] = "We received an error: " + str(e)
+        return history
 
 with gr.Blocks() as demo:
     
     radio = gr.Radio(value='gpt-3.5-turbo', choices=['gpt-3.5-turbo','gpt-4'], label='models')
-#    radio = gr.Radio(value='gpt-3.5-turbo', choices=['gpt-3.5-turbo'], label='models')
     chatbot = gr.Chatbot(value=[], elem_id="chatbot").style(height=650)
     with gr.Row():
         with gr.Column(scale=1.00):
@@ -61,8 +47,8 @@ with gr.Blocks() as demo:
                 placeholder="Enter text and press enter",
             ).style(container=False) 
 
-    txt.submit(add_text, [chatbot, txt], [chatbot, txt], queue=False).then(
-            generate_response, inputs =[chatbot, radio],outputs = chatbot)
+    txt.submit(accept_user_input, [chatbot, txt], [chatbot, txt]).then(
+        generate_response, [chatbot, radio], chatbot)
 
 # NOTE: Set GRADIO_SERVER_NAME
 demo.queue().launch(share=False)
