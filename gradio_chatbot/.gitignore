@@ -4,3 +4,6 @@ grchatbot.conf
 # Python compiled files
 __pycache__/
 *.py[cod]
+
+# Local db
+chatbot-library.json
