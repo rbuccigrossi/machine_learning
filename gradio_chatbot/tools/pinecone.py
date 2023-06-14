@@ -115,7 +115,7 @@ class PineconeManager:
 
     def query_index(self, query_text, top_n=5):
         # Get the embedding for the query text
-        vector = openai.Embedding.create(input=[query_text], engine=embed_model)
+        vector = openai.Embedding.create(input=[query_text], engine=self.embedding_model)
 
         # Query the pinecone index
         result = self.index_instance.query(vector['data'][0]['embedding'], top_k=top_n,
