@@ -2,6 +2,7 @@ import gradio as gr
 import pinecone
 import os 
 import json
+import traceback
 
 from tools.chatgpt import ChatGPT
 from tools.pinecone import PineconeManager
@@ -62,7 +63,8 @@ def document_lookup_chat(history, search, top_n, query, model):
         newhistory = history + [[query, response]]
         yield (newhistory, "", "")
     except Exception as e:
-        newhistory = history + [[query, f"We received an error: {str(e)}"]]
+        newhistory = history + [[query, f"We received an error {str(type(e))}: {str(e)}"]]
+        print(traceback.format_exc())
         yield (newhistory, None, None)
         
     

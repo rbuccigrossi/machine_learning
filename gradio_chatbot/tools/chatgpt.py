@@ -81,10 +81,20 @@ class ChatGPT:
             The response from the GPT model.
         """
         self.add_user_message(message)
-        response = openai.ChatCompletion.create(
-            model=model,
-            messages=self.message_history,
-        )
+        while True:
+            # Try the query
+            try:
+                response = openai.ChatCompletion.create(
+                    model=model,
+                    messages=self.message_history,
+                )
+                break
+            except openai.error.InvalidRequestError as e:
+                # Our response was probably too long so remove the first one
+                if (len(self.message_history) < 2):
+                    raise e
+                else:
+                    self.message_history.pop(0)
         gpt_response = response['choices'][0]['message']['content']
         self.add_assistant_message(gpt_response)
         return gpt_response
