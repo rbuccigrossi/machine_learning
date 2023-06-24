@@ -13,37 +13,37 @@ chatgpt = ChatGPT()
 # Connect to Pinecone
 docdatabase = PineconeManager()
 
-def generate_chat_response(history, text, model):
-    if (not(text)):
-        newhistory = history + [[text, f"Please enter a query"]]
+def generate_chat_response(history, prompt, model):
+    if (not(prompt)):
+        newhistory = history + [[prompt, f"Please enter a prompt"]]
         return (newhistory, None)
     try:
         # Now call the chatbot to get the response
-        response = chatgpt.chat(text, model)
+        response = chatgpt.chat(prompt, model)
         # Update the chatbot's response
-        newhistory = history + [[text, response]]
+        newhistory = history + [[prompt, response]]
         return (newhistory, "")
     except Exception as e:
         # Upon error, output the error as the response
-        newhistory = history + [[text, f"We received an error: {str(e)}"]]
+        newhistory = history + [[prompt, f"We received an error: {str(e)}"]]
         print(traceback.format_exc())
         return (newhistory, None)
 
-def document_lookup_chat(history, search, top_n, query, model):
-    if (not(query)):
-        newhistory = history + [[query, f"Please enter a query"]]
+def document_lookup_chat(history, search, top_n, prompt, model):
+    if (not(prompt)):
+        newhistory = history + [[prompt, f"Please enter a prompt"]]
         yield (newhistory, None, None)
         return
-    # If search is empty, then use the query for the search
+    # If search is empty, then use the prompt for the search
     if (not(search)):
-        search = query
+        search = prompt
     try:
         # Update status for search
-        newhistory = history + [[query, f"Searching for {top_n} documents with '{search}...'"]]
+        newhistory = history + [[prompt, f"Searching for {top_n} documents with '{search}...'"]]
         yield (newhistory, None, None)
         # Conduct search
         results = docdatabase.query_index(search, top_n)
-        newhistory = history + [[query, f"We found {len(results['matches'])} hits. Now executing chat query...'"]]
+        newhistory = history + [[prompt, f"We found {len(results['matches'])} hits. Now executing chat prompt...'"]]
         yield (newhistory, None, None)
         chat_search = "The following are a series of document sections for a request below\n\n"
         for r in results['matches']:
@@ -55,14 +55,14 @@ def document_lookup_chat(history, search, top_n, query, model):
             "Answer the request based upon the above document sections. " +
             "If the answer is not clear from the source, state 'I cannot answer " +
             "based upon the documents provided.'\n\n " +
-            "Reqeust: " + query
+            "Reqeust: " + prompt
         )
         # Now call the chatbot to get the response
         response = chatgpt.chat(chat_search, model)
-        newhistory = history + [[query, response]]
+        newhistory = history + [[prompt, response]]
         yield (newhistory, "", "")
     except Exception as e:
-        newhistory = history + [[query, f"We received an error {str(type(e))}: {str(e)}"]]
+        newhistory = history + [[prompt, f"We received an error {str(type(e))}: {str(e)}"]]
         print(traceback.format_exc())
         yield (newhistory, None, None)
         
@@ -101,10 +101,14 @@ with gr.Blocks(css="footer {visibility: hidden}", title="Chatbot Application") a
         radio = gr.Radio(value='gpt-3.5-turbo', choices=['gpt-3.5-turbo','gpt-3.5-turbo-16k','gpt-4'], label='models')
         chatbot = gr.Chatbot(value=[], elem_id="chatbot").style(height=550)
         with gr.Tab("Normal Chat"):
-            nc_txt = gr.Textbox(
-                show_label=False,
-                placeholder="Enter text and press enter",
-            ).style(container=False)
+            with gr.Row():
+                with gr.Column(scale=100):
+                    nc_prompt = gr.Textbox(
+                        show_label=False,
+                        placeholder="Enter prompt and press enter",
+                    ).style(container=False)
+                with gr.Column(scale=2, min_width=110):
+                    nc_submit = gr.Button("Submit")
         with gr.Tab("Chat w/ Document Lookup"):
             with gr.Row():
                 with gr.Column(scale=100):
@@ -119,9 +123,9 @@ with gr.Blocks(css="footer {visibility: hidden}", title="Chatbot Application") a
                                          value=5).style(container=False)
             with gr.Row():
                 with gr.Column(scale=100):
-                    dl_query = gr.Textbox(
+                    dl_prompt = gr.Textbox(
                         show_label=False,
-                        placeholder="Prompt for chatbot",
+                        placeholder="Enter prompt and press enter",
                     ).style(container=False)
                 with gr.Column(scale=2, min_width=110):
                     dl_submit = gr.Button("Submit")
@@ -138,10 +142,13 @@ with gr.Blocks(css="footer {visibility: hidden}", title="Chatbot Application") a
             lib_status = gr.Markdown()
 
     # NORMAL CHAT
-    nc_txt.submit(generate_chat_response, [chatbot, nc_txt, radio], [chatbot, nc_txt])
+    nc_prompt.submit(generate_chat_response, [chatbot, nc_prompt, radio], [chatbot, nc_prompt])
+    nc_submit.click(generate_chat_response, [chatbot, nc_prompt, radio], [chatbot, nc_prompt])
     # Document lookup and chat
-    dl_submit.click(document_lookup_chat, [chatbot, dl_search, dl_top_n, dl_query, radio],
-                    [chatbot, dl_search, dl_query])
+    dl_prompt.submit(document_lookup_chat, [chatbot, dl_search, dl_top_n, dl_prompt, radio],
+                    [chatbot, dl_search, dl_prompt])
+    dl_submit.click(document_lookup_chat, [chatbot, dl_search, dl_top_n, dl_prompt, radio],
+                    [chatbot, dl_search, dl_prompt])
     # Document Lookup Chat
     # LIBRARY DIALOG
     lib_delete_button.click(remove_document, [lib_doc_list], [lib_doc_list, lib_status])
