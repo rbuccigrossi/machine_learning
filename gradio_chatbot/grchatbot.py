@@ -13,27 +13,27 @@ chatgpt = ChatGPT()
 # Connect to Pinecone
 docdatabase = PineconeManager()
 
-def accept_user_input(history, text):
-    # Output the user side of the dialog
-    history = history + [[text,None]]
-    # Return thse history to display and clear the message box
-    return history, ""
-
-def generate_response(history, model):
-    # Grab the user input from the history
-    text = history[-1][0];
+def generate_chat_response(history, text, model):
+    if (not(text)):
+        newhistory = history + [[text, f"Please enter a query"]]
+        return (newhistory, None)
     try:
         # Now call the chatbot to get the response
         response = chatgpt.chat(text, model)
         # Update the chatbot's response
-        history[-1][1] = response
-        return history
+        newhistory = history + [[text, response]]
+        return (newhistory, "")
     except Exception as e:
         # Upon error, output the error as the response
-        history[-1][1] = "We received an error: " + str(e)
-        return history
+        newhistory = history + [[text, f"We received an error: {str(e)}"]]
+        print(traceback.format_exc())
+        return (newhistory, None)
 
 def document_lookup_chat(history, search, top_n, query, model):
+    if (not(query)):
+        newhistory = history + [[query, f"Please enter a query"]]
+        yield (newhistory, None, None)
+        return
     # If search is empty, then use the query for the search
     if (not(search)):
         search = query
@@ -58,7 +58,6 @@ def document_lookup_chat(history, search, top_n, query, model):
             "Reqeust: " + query
         )
         # Now call the chatbot to get the response
-        # TODO: handle openai.error.InvalidRequestError and shorten history or search
         response = chatgpt.chat(chat_search, model)
         newhistory = history + [[query, response]]
         yield (newhistory, "", "")
@@ -139,8 +138,7 @@ with gr.Blocks(css="footer {visibility: hidden}", title="Chatbot Application") a
             lib_status = gr.Markdown()
 
     # NORMAL CHAT
-    nc_txt.submit(accept_user_input, [chatbot, nc_txt], [chatbot, nc_txt]).then(
-        generate_response, [chatbot, radio], chatbot)
+    nc_txt.submit(generate_chat_response, [chatbot, nc_txt, radio], [chatbot, nc_txt])
     # Document lookup and chat
     dl_submit.click(document_lookup_chat, [chatbot, dl_search, dl_top_n, dl_query, radio],
                     [chatbot, dl_search, dl_query])
