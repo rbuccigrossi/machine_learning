@@ -13,6 +13,10 @@ chatgpt = ChatGPT()
 # Connect to Pinecone
 docdatabase = PineconeManager()
 
+def clear_chat():
+    chatgpt.clear_messages()
+    return ([])
+
 def generate_chat_response(history, prompt, model):
     if (not(prompt)):
         newhistory = history + [[prompt, f"Please enter a prompt"]]
@@ -98,8 +102,13 @@ def remove_document(filename):
 with gr.Blocks(css="footer {visibility: hidden}", title="Chatbot Application") as demo:
     
     with gr.Tab("Chat"):
-        radio = gr.Radio(value='gpt-3.5-turbo', choices=['gpt-3.5-turbo','gpt-3.5-turbo-16k','gpt-4'], label='models')
-        chatbot = gr.Chatbot(value=[], elem_id="chatbot").style(height=550)
+        with gr.Row():
+            with gr.Column(scale=100):
+                radio = gr.Radio(value='gpt-3.5-turbo', show_label=False, container=False,
+                                 choices=['gpt-3.5-turbo','gpt-3.5-turbo-16k','gpt-4'])
+            with gr.Column(scale=2, min_width=110):
+                clear_chat_button = gr.Button("Clear Chat")
+        chatbot = gr.Chatbot(value=[], elem_id="chatbot").style(height=500)
         with gr.Tab("Normal Chat"):
             with gr.Row():
                 with gr.Column(scale=100):
@@ -141,6 +150,8 @@ with gr.Blocks(css="footer {visibility: hidden}", title="Chatbot Application") a
         with gr.Row():
             lib_status = gr.Markdown()
 
+    # Clear CHAT
+    clear_chat_button.click(clear_chat, None, [chatbot])
     # NORMAL CHAT
     nc_prompt.submit(generate_chat_response, [chatbot, nc_prompt, radio], [chatbot, nc_prompt])
     nc_submit.click(generate_chat_response, [chatbot, nc_prompt, radio], [chatbot, nc_prompt])
