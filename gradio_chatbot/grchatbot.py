@@ -13,42 +13,43 @@ chatgpt = ChatGPT()
 # Connect to Pinecone
 docdatabase = PineconeManager()
 
-def clear_chat():
-    chatgpt.clear_messages()
-    return ([])
+def clear_chat(message_history):
+    chatgpt.clear_messages(message_history)
+    return [], message_history
 
-def generate_chat_response(history, prompt, model):
+
+def generate_chat_response(chat_display, prompt, message_history, model):
     if (not(prompt)):
-        newhistory = history + [[prompt, f"Please enter a prompt"]]
-        return (newhistory, None)
+        newchat_display = chat_display + [[prompt, f"Please enter a prompt"]]
+        return (newchat_display, prompt, message_history)
     try:
         # Now call the chatbot to get the response
-        response = chatgpt.chat(prompt, model)
+        response = chatgpt.chat(prompt, message_history, model)
         # Update the chatbot's response
-        newhistory = history + [[prompt, response]]
-        return (newhistory, "")
+        newchat_display = chat_display + [[prompt, response]]
+        return (newchat_display, "", message_history)
     except Exception as e:
         # Upon error, output the error as the response
-        newhistory = history + [[prompt, f"We received an error: {str(e)}"]]
+        newchat_display = chat_display + [[prompt, f"We received an error: {str(e)}"]]
         print(traceback.format_exc())
-        return (newhistory, None)
+        return (newchat_display, prompt, message_history)
 
-def document_lookup_chat(history, search, top_n, prompt, model):
+def document_lookup_chat(chat_display, search, top_n, prompt, message_history, model):
     if (not(prompt)):
-        newhistory = history + [[prompt, f"Please enter a prompt"]]
-        yield (newhistory, None, None)
+        newchat_display = chat_display + [[prompt, f"Please enter a prompt"]]
+        yield (newchat_display, search, prompt, message_history)
         return
     # If search is empty, then use the prompt for the search
     if (not(search)):
         search = prompt
     try:
         # Update status for search
-        newhistory = history + [[prompt, f"Searching for {top_n} documents with '{search}...'"]]
-        yield (newhistory, None, None)
+        newchat_display = chat_display + [[prompt, f"Searching for {top_n} documents with '{search}...'"]]
+        yield (newchat_display, search, prompt, message_history)
         # Conduct search
         results = docdatabase.query_index(search, top_n)
-        newhistory = history + [[prompt, f"We found {len(results['matches'])} hits. Now executing chat prompt...'"]]
-        yield (newhistory, None, None)
+        newchat_display = chat_display + [[prompt, f"We found {len(results['matches'])} hits. Now executing chat prompt...'"]]
+        yield (newchat_display, search, prompt, message_history)
         chat_search = "The following are a series of document sections for a request below\n\n"
         for r in results['matches']:
             chat_search += (
@@ -62,19 +63,19 @@ def document_lookup_chat(history, search, top_n, prompt, model):
             "Request: " + prompt
         )
         # Now call the chatbot to get the response
-        response = chatgpt.chat(chat_search, model)
-        newhistory = history + [[prompt, response]]
-        yield (newhistory, "", "")
+        response = chatgpt.chat(chat_search, message_history, model)
+        newchat_display = chat_display + [[prompt, response]]
+        yield (newchat_display, "", "", message_history)
     except Exception as e:
-        newhistory = history + [[prompt, f"We received an error {str(type(e))}: {str(e)}"]]
+        newchat_display = chat_display + [[prompt, f"We received an error {str(type(e))}: {str(e)}"]]
         print(traceback.format_exc())
-        yield (newhistory, None, None)
+        yield (newchat_display, search, prompt, message_history)
         
     
-def map_reduce_chat(history, document, prompt, model):
+def map_reduce_chat(chat_display, document, prompt, message_history, model):
     if (not(document) or not(prompt)):
-        newhistory = history + [[prompt, f"Please enter a document and a prompt"]]
-        yield (newhistory, None, None)
+        newchat_display = chat_display + [[prompt, f"Please enter a document and a prompt"]]
+        yield (newchat_display, document, prompt, message_history)
         return
     # Split the document into sections
     # Split the text by newline
@@ -132,18 +133,18 @@ def map_reduce_chat(history, document, prompt, model):
                     "Request: " + prompt
                 )
             # Display the chat_search we are running
-            newhistory = history + [[chat_search, ""]]
-            yield (newhistory, None, None)
-            response = chatgpt.chat(chat_search, model)
-            # Display the response (and save it in our local copy of the history)
-            history = history + [[chat_search, response]]
-            yield (history, None, None)
+            newchat_display = chat_display + [[chat_search, ""]]
+            yield (newchat_display, document, prompt, message_history)
+            response = chatgpt.chat(chat_search, message_history, model)
+            # Display the response (and save it in our local copy of the chat_display)
+            chat_display = chat_display + [[chat_search, response]]
+            yield (chat_display, document, prompt, message_history)
             # Move to the next section
             n += 1
     except Exception as e:
-        newhistory = history + [[prompt, f"We received an error {str(type(e))}: {str(e)}"]]
+        newchat_display = chat_display + [[prompt, f"We received an error {str(type(e))}: {str(e)}"]]
         print(traceback.format_exc())
-        yield (newhistory, None, None)
+        yield (newchat_display, document, prompt, message_history)
         
     
 def add_document(lib_upload):
@@ -184,7 +185,8 @@ with gr.Blocks(css="footer {visibility: hidden}", title="Chatbot Application") a
                                  container=False)
             with gr.Column(scale=2, min_width=110):
                 clear_chat_button = gr.Button("Clear Chat")
-        chatbot = gr.Chatbot(value=[], elem_id="chatbot", height=500)
+        chat_display = gr.Chatbot(value=[], elem_id="chat_display", height=500)
+        message_history = gr.State(value=[])
         with gr.Tab("Normal Chat"):
             with gr.Row():
                 with gr.Column(scale=100):
@@ -239,20 +241,22 @@ with gr.Blocks(css="footer {visibility: hidden}", title="Chatbot Application") a
             lib_status = gr.Markdown()
 
     # Clear CHAT
-    clear_chat_button.click(clear_chat, None, [chatbot])
+    clear_chat_button.click(clear_chat, [message_history], [chat_display, message_history])
     # NORMAL CHAT
-    nc_prompt.submit(generate_chat_response, [chatbot, nc_prompt, radio], [chatbot, nc_prompt])
-    nc_submit.click(generate_chat_response, [chatbot, nc_prompt, radio], [chatbot, nc_prompt])
+    nc_prompt.submit(generate_chat_response, [chat_display, nc_prompt, message_history, radio],
+                     [chat_display, nc_prompt, message_history])
+    nc_submit.click(generate_chat_response, [chat_display, nc_prompt, message_history, radio],
+                    [chat_display, nc_prompt, message_history])
     # Document lookup and chat
-    dl_prompt.submit(document_lookup_chat, [chatbot, dl_search, dl_top_n, dl_prompt, radio],
-                    [chatbot, dl_search, dl_prompt])
-    dl_submit.click(document_lookup_chat, [chatbot, dl_search, dl_top_n, dl_prompt, radio],
-                    [chatbot, dl_search, dl_prompt])
+    dl_prompt.submit(document_lookup_chat, [chat_display, dl_search, dl_top_n, dl_prompt, message_history, radio],
+                    [chat_display, dl_search, dl_prompt, message_history])
+    dl_submit.click(document_lookup_chat, [chat_display, dl_search, dl_top_n, dl_prompt, message_history, radio],
+                    [chat_display, dl_search, dl_prompt, message_history])
     # Question with Large Document (Map-Reduce)
-    mr_prompt.submit(map_reduce_chat, [chatbot, mr_document, mr_prompt, radio],
-                    [chatbot, mr_document, mr_prompt])
-    mr_submit.click(map_reduce_chat, [chatbot, mr_document, mr_prompt, radio],
-                    [chatbot, mr_document, mr_prompt])
+    mr_prompt.submit(map_reduce_chat, [chat_display, mr_document, mr_prompt, message_history, radio],
+                    [chat_display, mr_document, mr_prompt, message_history])
+    mr_submit.click(map_reduce_chat, [chat_display, mr_document, mr_prompt, message_history, radio],
+                    [chat_display, mr_document, mr_prompt, message_history])
     # LIBRARY DIALOG
     lib_delete_button.click(remove_document, [lib_doc_list], [lib_doc_list, lib_status])
     lib_upload.upload(add_document, [lib_upload], [lib_doc_list, lib_status])

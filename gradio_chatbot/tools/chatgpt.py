@@ -16,18 +16,16 @@ class ChatGPT:
     ----------
     api_key : str
         OpenAI API key obtained from environment variable.
-    message_history : list
-        List to keep track of the chat history.
 
     Methods
     -------
-    add_user_message(content):
+    add_user_message(content, message_history):
         Adds a user message to the message history.
-    add_assistant_message(content):
+    add_assistant_message(content, message_history):
         Adds an assistant message to the message history.
-    chat(message, model="gpt-3.5-turbo"):
+    chat(message, message_history, model="gpt-3.5-turbo"):
         Sends a message to the GPT model and returns its response.
-    clear_messages():
+    clear_messages(message_history):
         Clears the chat history.
     """
 
@@ -40,9 +38,8 @@ class ChatGPT:
             raise Exception("OPENAI_API_KEY is not set in the environment variables.")
         
         openai.api_key = self.api_key
-        self.message_history = []
 
-    def add_user_message(self, content):
+    def add_user_message(self, content, message_history):
         """
         Adds a user message to the message history.
 
@@ -50,10 +47,12 @@ class ChatGPT:
         ----------
         content : str
             The message from the user.
+        message_history : list
+            The message history list
         """
-        self.message_history.append({'role': 'user', 'content': content})
+        message_history.append({'role': 'user', 'content': content})
 
-    def add_assistant_message(self, content):
+    def add_assistant_message(self, content, message_history):
         """
         Adds a GPT message to the message history.
 
@@ -61,10 +60,12 @@ class ChatGPT:
         ----------
         content : str
             The message from the GPT model.
+        message_history : list
+            The message history list
         """
-        self.message_history.append({'role': 'assistant', 'content': content})
+        message_history.append({'role': 'assistant', 'content': content})
 
-    def chat(self, message, model="gpt-3.5-turbo"):
+    def chat(self, message, message_history, model="gpt-3.5-turbo"):
         """
         Sends a message to the GPT model and returns its response.
 
@@ -72,6 +73,8 @@ class ChatGPT:
         ----------
         message : str
             The message to be sent to the GPT model.
+        message_history : list
+            The message history list
         model : str, optional
             The GPT model to be used (default is "gpt-3.5-turbo").
 
@@ -80,27 +83,32 @@ class ChatGPT:
         str
             The response from the GPT model.
         """
-        self.add_user_message(message)
+        self.add_user_message(message, message_history)
         while True:
             # Try the query
             try:
                 response = openai.ChatCompletion.create(
                     model=model,
-                    messages=self.message_history,
+                    messages=message_history,
                 )
                 break
             except openai.error.InvalidRequestError as e:
                 # Our response was probably too long so remove the first one
-                if (len(self.message_history) < 2):
+                if (len(message_history) < 2):
                     raise e
                 else:
-                    self.message_history.pop(0)
+                    message_history.pop(0)
         gpt_response = response['choices'][0]['message']['content']
-        self.add_assistant_message(gpt_response)
+        self.add_assistant_message(gpt_response, message_history)
         return gpt_response
 
-    def clear_messages(self):
+    def clear_messages(self, message_history):
         """
         Clears the chat history.
+
+        Parameters
+        ----------
+        message_history : list
+            The message history list
         """
-        self.message_history = []
+        message_history.clear()
