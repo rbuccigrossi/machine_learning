@@ -6,3 +6,7 @@ export PINECONE_API_KEY="PINECONE_API_KEY"
 
 # Gradio server config
 export GRADIO_SERVER_NAME="0.0.0.0"
+
+# Optional Username and Password
+# export GRCHATBOT_USER="user"
+# export GRCHATBOT_PASSWORD="password"

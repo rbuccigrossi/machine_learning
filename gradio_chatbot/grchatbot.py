@@ -179,19 +179,19 @@ with gr.Blocks(css="footer {visibility: hidden}", title="Chatbot Application") a
     with gr.Tab("Chat"):
         with gr.Row():
             with gr.Column(scale=100):
-                radio = gr.Radio(value='gpt-3.5-turbo', show_label=False,
-                                 choices=['gpt-3.5-turbo','gpt-3.5-turbo-16k','gpt-4']
-                ).style(container=False)
+                radio = gr.Radio(value='gpt-3.5-turbo-16k', show_label=False,
+                                 choices=['gpt-3.5-turbo','gpt-3.5-turbo-16k','gpt-4'],
+                                 container=False)
             with gr.Column(scale=2, min_width=110):
                 clear_chat_button = gr.Button("Clear Chat")
-        chatbot = gr.Chatbot(value=[], elem_id="chatbot").style(height=500)
+        chatbot = gr.Chatbot(value=[], elem_id="chatbot", height=500)
         with gr.Tab("Normal Chat"):
             with gr.Row():
                 with gr.Column(scale=100):
                     nc_prompt = gr.Textbox(
                         show_label=False,
                         placeholder="Enter prompt and press enter",
-                    ).style(container=False)
+                        container=False)
                 with gr.Column(scale=2, min_width=110):
                     nc_submit = gr.Button("Submit")
         with gr.Tab("Chat w/ Document Lookup"):
@@ -200,31 +200,30 @@ with gr.Blocks(css="footer {visibility: hidden}", title="Chatbot Application") a
                     dl_search = gr.Textbox(
                         show_label=False,
                         placeholder="Search text for documents (leave blank to use prompt for search)",
-                    ).style(container=False)
-                with gr.Column(scale=1, min_width=40):
-                    gr.Markdown("   Top N:")
-                with gr.Column(scale=1, min_width=50):
-                    dl_top_n = gr.Number(show_label=False,
-                                         value=5).style(container=False)
+                        container=False)
+                with gr.Column(scale=1, min_width=30):
+                    gr.Markdown(" Hits:")
+                with gr.Column(scale=1, min_width=80):
+                    dl_top_n = gr.Number(show_label=False, container=False, value=5)
             with gr.Row():
                 with gr.Column(scale=100):
                     dl_prompt = gr.Textbox(
                         show_label=False,
                         placeholder="Enter prompt and press enter",
-                    ).style(container=False)
+                        container=False)
                 with gr.Column(scale=2, min_width=110):
                     dl_submit = gr.Button("Submit")
         with gr.Tab("Question with Large Document"):
             mr_document = gr.Textbox(
                 show_label=False, max_lines=5,
                 placeholder="Cut and Paste Document Here",
-            ).style(container=False)
+                container=False)
             with gr.Row():
                 with gr.Column(scale=100):
                     mr_prompt = gr.Textbox(
                         show_label=False,
                         placeholder="Enter prompt and press enter",
-                    ).style(container=False)
+                        container=False)
                 with gr.Column(scale=2, min_width=110):
                     mr_submit = gr.Button("Submit")
     with gr.Tab("Library"):
@@ -259,4 +258,11 @@ with gr.Blocks(css="footer {visibility: hidden}", title="Chatbot Application") a
     lib_upload.upload(add_document, [lib_upload], [lib_doc_list, lib_status])
 
 # NOTE: Set GRADIO_SERVER_NAME
-demo.queue().launch(share=False)
+gruser = os.getenv("GRCHATBOT_USER")
+grpassword = os.getenv("GRCHATBOT_PASSWORD")
+if (gruser is None) or (grpassword is None):
+    auth = None
+else:
+    auth = (gruser, grpassword)
+
+demo.queue().launch(share=False, auth=auth)
