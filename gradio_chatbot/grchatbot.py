@@ -135,6 +135,10 @@ def map_reduce_chat(chat_display, document, prompt, message_history, model):
             # Display the chat_search we are running
             newchat_display = chat_display + [[chat_search, ""]]
             yield (newchat_display, document, prompt, message_history)
+            # To avoid message overruns and keep the chatbot focused, limit the message_history to
+            # the last response from the chatbot
+            if len(message_history) > 0:
+                message_history = [message_history[-1]]
             response = chatgpt.chat(chat_search, message_history, model)
             # Display the response (and save it in our local copy of the chat_display)
             chat_display = chat_display + [[chat_search, response]]
